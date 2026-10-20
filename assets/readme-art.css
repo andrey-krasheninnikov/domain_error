@@ -1,5 +1,11 @@
-/* Static documentation artwork: 1600 x 900, dark theme, no motion.
-   IBM Plex fonts: https://github.com/IBM/plex (license: fonts/OFL.txt). */
+/* Static documentation artwork in the want dark style, without motion.
+   IBM Plex: fonts/OFL.txt. Pixelify Sans: fonts/OFL-PixelifySans.txt. */
+@font-face {
+  font-family: 'Pixelify Sans';
+  src: url('fonts/PixelifySans.ttf') format('truetype');
+  font-weight: 400 700;
+  font-display: swap;
+}
 @font-face {
   font-family: 'Plex Sans';
   src: url('fonts/IBMPlexSans-Regular.woff2') format('woff2');
@@ -20,26 +26,26 @@
 }
 :root {
   color-scheme: dark;
-  --background: #111a20;
-  --surface: #19262d;
-  --accent-surface: #203b3e;
-  --text: #edf3f2;
-  --muted: #b2c1c6;
-  --accent: #8edbd0;
-  --line: #657c85;
+  --background: #060713;
+  --surface: #0e0e27;
+  --accent-surface: #1a1641;
+  --text: #f4f0ff;
+  --muted: #bdbbe4;
+  --accent: #968bff;
+  --line: #5750ad;
   --radius: 12px;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; width: 1600px; height: 900px; overflow: hidden; }
 body {
   padding: 48px 72px;
-  background: var(--background);
+  background: linear-gradient(#06071380, #06071380), url('grid.png') center / cover;
   color: var(--text);
   font: 400 22px/1.45 'Plex Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 h1, h2, h3, p, pre { margin: 0; }
-h1 { font-size: 62px; line-height: 1.12; font-weight: 600; letter-spacing: -2.4px; }
+h1 { font-family: 'Pixelify Sans', monospace; font-size: 70px; line-height: 1; font-weight: 600; letter-spacing: -2.4px; }
 h2 { font-size: 28px; line-height: 1.25; font-weight: 600; letter-spacing: -.5px; }
 h3 { font-size: 23px; font-weight: 600; }
 code, pre, .mono { font-family: 'Plex Mono', monospace; font-weight: 400; }
@@ -48,15 +54,15 @@ pre { font-size: 20px; line-height: 1.7; }
 .accent { color: var(--accent); }
 .muted { color: var(--muted); }
 .small { font-size: 19px; line-height: 1.5; }
-.brand { display: flex; align-items: center; gap: 14px; font-size: 24px; font-weight: 600; letter-spacing: -.8px; }
+.brand { font-family: 'Pixelify Sans', monospace; line-height: 1; display: flex; align-items: center; gap: 14px; font-size: 34px; font-weight: 600; letter-spacing: -.8px; }
 .logo-mark {
   display: grid; place-items: center; width: 38px; height: 38px;
-  background: var(--accent); color: var(--background); border-radius: 13px;
-  font-size: 23px;
+  background: #5746ff; color: var(--text); border-radius: 3px;
+  box-shadow: 0 0 22px #5746ff66; font-size: 29px;
 }
 .page-heading { margin: 34px 0 30px; }
 .page-heading p { margin-top: 15px; color: var(--muted); }
-.panel { background: var(--surface); border-radius: var(--radius); padding: 26px 28px; }
+.panel { border: 1px solid #6655ff; background: var(--surface); border-radius: var(--radius); padding: 26px 28px; }
 .connector { align-self: center; height: 1px; background: var(--line); position: relative; }
 .connector::after {
   content: ''; position: absolute; right: 0; top: -4px; width: 9px; height: 9px;
@@ -74,7 +80,7 @@ pre { font-size: 20px; line-height: 1.7; }
 .route:last-child { border: 0; }
 .route-source strong { display: block; font-size: 24px; font-weight: 600; }
 .route-source p, .route-result p { margin-top: 4px; color: var(--muted); font-size: 18px; }
-.route-action { padding: 20px 22px; background: var(--surface); border-radius: var(--radius); }
+.route-action { border: 1px solid #6655ff; padding: 20px 22px; background: var(--surface); border-radius: var(--radius); }
 .route-action code { color: var(--accent); font-size: 21px; }
 .route-action p { margin-top: 5px; font-size: 18px; color: var(--muted); }
 .route-action.chain { display: grid; grid-template-columns: auto 28px auto; gap: 12px; align-items: center; }
@@ -91,7 +97,7 @@ pre { font-size: 20px; line-height: 1.7; }
 .model-title { display: flex; align-items: baseline; gap: 18px; margin-bottom: 22px; }
 .model-title span { font-size: 18px; color: var(--muted); }
 .model-title code { font-size: 29px; }
-.field-group { padding: 18px 26px; background: var(--surface); border-radius: var(--radius); }
+.field-group { border: 1px solid #6655ff; padding: 18px 26px; background: var(--surface); border-radius: var(--radius); }
 .field-group + .field-group { margin-top: 18px; }
 .field-group.compared { background: var(--accent-surface); }
 .field-group h3 { margin-bottom: 12px; }
@@ -102,7 +108,7 @@ pre { font-size: 20px; line-height: 1.7; }
 .equality-note { margin-top: 19px; font-size: 19px; color: var(--muted); }
 .equality-note code { color: var(--accent); }
 .hierarchy h2 { margin-bottom: 22px; }
-.feature-root { background: var(--surface); padding: 23px 28px; border-radius: var(--radius); }
+.feature-root { border: 1px solid #6655ff; background: var(--surface); padding: 23px 28px; border-radius: var(--radius); }
 .feature-root code { color: var(--accent); font-size: 24px; }
 .feature-root p { margin-top: 3px; color: var(--muted); font-size: 18px; }
 .subtypes { margin-left: 29px; padding-left: 35px; }
@@ -128,7 +134,7 @@ pre { font-size: 20px; line-height: 1.7; }
 .result-definition h2 { font-size: 37px; margin-bottom: 5px; }
 .result-definition > code { font-size: 23px; color: var(--muted); }
 .branches { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.branch { padding: 24px; border-radius: var(--radius); background: var(--surface); }
+.branch { border: 1px solid #6655ff; padding: 24px; border-radius: var(--radius); background: var(--surface); }
 .branch.success { background: var(--accent-surface); }
 .branch h3 { font-size: 20px; margin-bottom: 19px; }
 .branch.success h3 { color: var(--accent); }
@@ -137,11 +143,30 @@ pre { font-size: 20px; line-height: 1.7; }
 .getter-note { font-size: 18px; color: var(--muted); margin-top: 17px; }
 .methods h2 { font-size: 26px; margin-bottom: 13px; }
 .methods h2 code { color: var(--accent); }
-.fold-code { font-size: 22px; padding: 18px 22px; background: var(--surface); border-radius: var(--radius); }
-.methods .map-heading { margin-top: 27px; }
-.map-line { display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: center; margin-top: 14px; }
-.map-line pre { font-size: 18px; }
+.fold-code { border: 1px solid #6655ff; font-size: 22px; padding: 18px 22px; background: var(--surface); border-radius: var(--radius); }
+.methods .map-heading { margin-top: 20px; }
+.map-line { display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: center; margin-top: 10px; }
+.map-line pre { font-size: 18px; line-height: 1.25; }
 .map-line > code { color: var(--accent); font-size: 22px; }
 .map-note { margin-top: 5px; color: var(--muted); font-size: 18px; }
-.payload-note { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-top: 27px; padding-top: 22px; border-top: 1px solid var(--line); font-size: 18px; color: var(--muted); }
+.payload-note { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 18px; color: var(--muted); }
 .payload-note code { color: var(--text); }
+
+/* The compact cover leaves detailed contracts to the scenario diagrams. */
+body.cover-page { height: 640px; padding: 48px 72px; }
+.cover-page .brand { font-size: 38px; }
+.cover-layout { display: grid; grid-template-columns: 1fr 560px; gap: 64px; align-items: center; margin-top: 32px; }
+.cover-intro h1 { font-size: 96px; line-height: 1.1; letter-spacing: -3px; }
+.cover-intro p { color: var(--muted); font-size: 27px; line-height: 1.5; margin-top: 23px; }
+.cover-result { padding: 24px 28px 28px; border: 2px solid #6655ff; border-radius: 14px; background: #08091beb; box-shadow: 0 0 24px #5746ff24; }
+.cover-result h2 { font-size: 34px; margin: 22px 0; }
+.cover-branch { padding: 20px 22px; border-radius: var(--radius); background: var(--surface); }
+.cover-branch + .cover-branch { margin-top: 16px; }
+.cover-branch span { display: block; font-size: 17px; letter-spacing: 2px; color: var(--muted); margin-bottom: 7px; }
+.cover-branch code { font-size: 28px; }
+.cover-branch.success { background: var(--accent-surface); color: var(--accent); }
+
+.window-bar { display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #6655ff66; padding-bottom: 18px; }
+.window-bar span { width: 12px; height: 12px; border-radius: 50%; background: #7160ff; box-shadow: 0 0 12px #5746ff66; }
+.window-bar code { margin-left: auto; color: var(--accent); font-size: 17px; }
+.cover-meta { font: 20px/1.4 'Plex Mono', monospace; color: var(--accent); margin-top: 28px; }

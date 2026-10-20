@@ -7,7 +7,8 @@ complete example, and find the precise behavior needed for production code?
 
 ## Recommended direction
 
-Use a compact technical cover in the existing dark and mint palette, followed
+Use a compact technical cover in the want dark style with indigo pixel grids,
+pixel headings and terminal cards, followed
 by an executable quick start and a guide organized by scenarios. An API map and
 working table of contents give returning readers a shorter path to details.
 Keep the full practical guide in the README, with supporting links for history.

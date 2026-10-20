@@ -22,7 +22,9 @@ inline historical identifiers rather than executable code from old releases.
 Check local links and navigation anchors without requiring network access in CI.
 Verify external targets and rendered output separately before publication.
 
-Use the existing dark palette, mint accent and bundled IBM Plex fonts. Keep
+Use the want dark style: near-black navy, indigo pixel grids, terminal cards,
+pixel headings and bundled IBM Plex body fonts. Bundle Pixelify Sans under its
+SIL Open Font License. Keep
 editable local artwork and PNG exports together. Publish artwork before final
 README links, then use absolute raw URLs pinned to that immutable resource
 commit. Both GitHub and pub.dev can load the same reviewed bytes without
