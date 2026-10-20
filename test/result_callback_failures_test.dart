@@ -10,8 +10,8 @@ void main() {
       final trace = StackTrace.fromString('callback trace');
       Never failCallback(Object? _) => Error.throwWithStackTrace(error, trace);
       try {
-        const success = Either<Object?, Object?>.success(null);
-        const failure = Either<Object?, Object?>.error(null);
+        const success = Result<Object?, Object?>.success(null);
+        const failure = Result<Object?, Object?>.error(null);
         switch (method) {
           case 'map':
             success.map(failCallback);
@@ -39,8 +39,8 @@ void main() {
           Error.throwWithStackTrace(error, trace);
         }
 
-        const success = Either<Object?, Object?>.success(null);
-        const failure = Either<Object?, Object?>.error(null);
+        const success = Result<Object?, Object?>.success(null);
+        const failure = Result<Object?, Object?>.error(null);
         final pending = switch (method) {
           'map' => success.mapAsync(failCallback),
           'andThen' => success.andThenAsync(failCallback),
@@ -56,7 +56,7 @@ void main() {
     test('Future $method propagates source failure without invoking callbacks', () async {
       final error = StateError('source future failed');
       final trace = StackTrace.fromString('source trace');
-      final source = Future<Either<Object?, Object?>>.error(error, trace);
+      final source = Future<Result<Object?, Object?>>.error(error, trace);
       Never skipped(Object? _) => throw StateError('must skip');
       final pending = switch (method) {
         'map' => source.map(skipped),

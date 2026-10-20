@@ -30,13 +30,13 @@ files. Standard T/E and U/F type parameters express value/error roles.
 
 | Meaning and consumers | Current name | Decision | Reason and migration |
 | --- | --- | --- | --- |
-| Generic outcome; all library and consumer code | Either<L, R> | Result<T, E> | Result describes error/success; put former R first and former L second |
-| Constructors and pattern types | Either(), Either.error/success, EitherError/L,R and EitherSuccess/L,R | Result(), Result.error/success, ResultError<T,E> and ResultSuccess<T,E> | One type family; reorder explicit type arguments |
-| Domain outcome annotations and capture signatures | Result<T> | DomainResult<T> = Result<T, DomainError> | Distinguish the specialization from generic Result |
-| Asynchronous domain annotations | FutureResult<T> | FutureDomainResult<T> | State which result specialization the future carries |
+| Generic outcome; all library and consumer code | `Either<L, R>` | `Result<T, E>` | Result describes error/success; put former R first and former L second |
+| Constructors and pattern types | Either(), Either.error/success, `EitherError<L, R>` and `EitherSuccess<L, R>` | Result(), Result.error/success, `ResultError<T,E>` and `ResultSuccess<T,E>` | One type family; reorder explicit type arguments |
+| Domain outcome annotations and capture signatures | `Result<T>` | `DomainResult<T>` = `Result<T, DomainError>` | Distinguish the specialization from generic Result |
+| Asynchronous domain annotations | `FutureResult<T>` | `FutureDomainResult<T>` | State which result specialization the future carries |
 | Branch fields, patterns, callback parameter names | errorValue, successValue | error, value | The receiver already identifies the result; update named object patterns too |
-| Domain getter extension and explicit extension overrides | ResultDomainError<T> | DomainResultError<T> | Match the receiver's DomainResult name; domainError stays |
-| Future composition extension and explicit overrides | FutureEitherOperations<L,R> | FutureResult<T,E> | The receiver supplies the execution context; no Operations suffix |
+| Domain getter extension and explicit extension overrides | `ResultDomainError<T>` | `DomainResultError<T>` | Match the receiver's DomainResult name; domainError stays |
+| Future composition extension and explicit overrides | `FutureEitherOperations<L,R>` | `FutureResult<T,E>` | The receiver supplies the execution context; no Operations suffix |
 | Value and error transforms | R2, L2; fold's T | U, F; fold's U | Keep generic roles distinct without shadowing Result's T |
 | Stored cause formatting | local error in DomainError._displayDetail | cause | Distinguish stored diagnostic context from a caught error |
 | Library modules and corresponding tests | either.dart; current result.dart | result.dart; domain_result.dart | Match the declared type families; rename either_* tests to result_* and current result_test to domain_result_test |

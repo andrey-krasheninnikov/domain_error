@@ -15,26 +15,26 @@
   <main>
     <section class="capture-apis" aria-label="Capture API comparison">
       <div class="capture-api">
-        <div><h2><code>captureResult</code></h2><code class="return-type">Future&lt;Result&lt;T&gt;&gt;</code></div>
-        <p>Awaits the operation and callbacks; returns <code>FutureResult&lt;T&gt;</code>.</p>
+        <div><h2><code>captureResult</code></h2><code class="return-type">Future&lt;DomainResult&lt;T&gt;&gt;</code></div>
+        <p>Awaits the operation and callbacks; returns <code>FutureDomainResult&lt;T&gt;</code>.</p>
       </div>
       <div class="capture-api">
-        <div><h2><code>captureResultSync</code></h2><code class="return-type">Result&lt;T&gt;</code></div>
+        <div><h2><code>captureResultSync</code></h2><code class="return-type">DomainResult&lt;T&gt;</code></div>
         <p>Returns immediately. Async callbacks are unsupported and not awaited.</p>
       </div>
     </section>
     <div class="result-workspace">
       <section>
-        <div class="result-definition"><h2><code>Result&lt;T&gt;</code></h2><code>= Either&lt;DomainError, T&gt;</code></div>
+        <div class="result-definition"><h2><code>DomainResult&lt;T&gt;</code></h2><code>= Result&lt;T, DomainError&gt;</code></div>
         <div class="branches">
           <div class="branch">
-            <h3><code>Either.error(error)</code></h3>
-            <p>isError<br>errorValue</p>
-            <p class="branch-alias"><code>domainError</code> getter on Result</p>
+            <h3><code>Result.error(error)</code></h3>
+            <p>isError<br>error</p>
+            <p class="branch-alias"><code>domainError</code> getter on DomainResult</p>
           </div>
           <div class="branch success">
-            <h3><code>Either.success(value)</code></h3>
-            <p>isSuccess<br>successValue</p>
+            <h3><code>Result.success(value)</code></h3>
+            <p>isSuccess<br>value</p>
           </div>
         </div>
         <p class="getter-note">Wrong-branch getters throw <code>StateError</code>.</p>
@@ -43,10 +43,10 @@
         <h2><code>fold</code> handles either outcome</h2>
         <pre class="fold-code">result.fold(onError, onSuccess)</pre>
         <h2 class="map-heading"><code>map</code> transforms success only</h2>
-        <div class="map-line"><pre>Either.success(7)
+        <div class="map-line"><pre>Result.success(7)
   .map((value) =&gt; value * 2)</pre><code>→ 14</code></div>
-        <div class="map-line"><pre>Either.error(error).map(transform)</pre><code>→ error</code></div>
-        <p class="map-note">Both stay wrapped in Either. Errors skip the transform.</p>
+        <div class="map-line"><pre>Result.error(error).map(transform)</pre><code>→ error</code></div>
+        <p class="map-note">Both stay wrapped in Result. Errors skip the transform.</p>
       </section>
     </div>
     <div class="payload-note">

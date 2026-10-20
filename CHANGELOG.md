@@ -1,3 +1,16 @@
+## 5.0.0
+
+- Rename the generic outcome to `Result<T, E>`, with the success type first.
+- Rename domain aliases to `DomainResult<T>` and `FutureDomainResult<T>`.
+- Use `ResultError` / `ResultSuccess` and `error` / `value` branch fields.
+- Rename the domain getter extension to `DomainResultError` and the Future
+  composition extension to `FutureResult`.
+- Update callers, examples, diagrams and the glossary together. See the
+  [4.x to 5.0 migration guide](https://github.com/andrey-krasheninnikov/domain_error/blob/main/docs/migration-5.0.md)
+  for all source changes. There are no compatibility aliases.
+- Preserve capture/composition behavior, diagnostic identifiers, error messages,
+  equality rules, and Dart 3.0 / Flutter 3.10 compatibility.
+
 # Changelog
 
 All notable changes to this project will be documented in this file.

@@ -22,12 +22,12 @@ class SampleError extends DomainError {
   String get typeIdentifier => 'sample.error';
 }
 void main() {
-  final Result<int> result = captureResultSync(
+  final DomainResult<int> result = captureResultSync(
     () => 42,
     mapToDomainError: (error, trace) => SampleError(),
     $parameter: ${callback.value},
   );
-  if (result.successValue != 42) throw StateError('wrong result');
+  if (result.value != 42) throw StateError('wrong result');
 }
 ''');
         final compiled = await Process.run(Platform.resolvedExecutable, [

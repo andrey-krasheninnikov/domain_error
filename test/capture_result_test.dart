@@ -16,7 +16,7 @@ void main() {
         onObserverError: (_, __) => observations.add('observer error'),
       );
       operation.complete(9);
-      expect((await result).successValue, 9);
+      expect((await result).value, 9);
       expect(observations, isEmpty);
     });
 
@@ -211,7 +211,7 @@ void main() {
       );
 
       expect(result.isSuccess, isTrue);
-      expect(result.successValue, 7);
+      expect(result.value, 7);
     });
 
     test('returns thrown DomainError', () async {
@@ -347,8 +347,8 @@ void main() {
         () => gate.future,
         mapToDomainError: (_, __) => throw StateError('unexpected mapper'),
       );
-      expect(result.successValue, same(gate.future));
-      final failure = expectLater(result.successValue, throwsA(same(original)));
+      expect(result.value, same(gate.future));
+      final failure = expectLater(result.value, throwsA(same(original)));
       gate.completeError(original, trace);
       await failure;
     });
@@ -360,7 +360,7 @@ void main() {
       );
 
       expect(result.isSuccess, isTrue);
-      expect(result.successValue, 7);
+      expect(result.value, 7);
     });
 
     test('returns thrown DomainError', () {

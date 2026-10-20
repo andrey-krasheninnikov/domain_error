@@ -33,16 +33,16 @@ abstract class DomainError extends Equatable implements Exception {
       return description;
     }
 
-    final error = cause;
-    if (error == null) {
+    final cause = this.cause;
+    if (cause == null) {
       return null;
     }
 
     try {
-      if (error is DomainError) {
-        return error.typeIdentifier;
+      if (cause is DomainError) {
+        return cause.typeIdentifier;
       }
-      final detail = _firstLine(error.toString());
+      final detail = _firstLine(cause.toString());
       if (detail.isEmpty || detail.startsWith('Instance of ')) {
         return 'unknown';
       }

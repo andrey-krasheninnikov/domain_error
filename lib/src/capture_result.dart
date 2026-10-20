@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:domain_error/src/domain_error.dart';
-import 'package:domain_error/src/either.dart';
+import 'package:domain_error/src/domain_result.dart';
 import 'package:domain_error/src/result.dart';
 
-/// Runs [operation] and captures its outcome in a [Result].
+/// Runs [operation] and captures its outcome in a [DomainResult].
 ///
-/// A successful call becomes [Either.success]. A thrown [DomainError] becomes
-/// [Either.error] with the same instance after [onDomainError].
+/// A successful call becomes [Result.success]. A thrown [DomainError] becomes
+/// [Result.error] with the same instance after [onDomainError].
 /// Any other thrown object is observed by [onRawError],
 /// then converted by [mapToDomainError]. The mapped error
 /// does not trigger [onDomainError].
@@ -17,7 +17,7 @@ import 'package:domain_error/src/result.dart';
 /// ignored. Failures of that reporter are also ignored, without recursion.
 /// Observation never replaces the result. Mapper failures propagate with their
 /// original stack trace; they are not passed to an observer.
-Future<Result<T>> captureResult<T>(
+Future<DomainResult<T>> captureResult<T>(
   FutureOr<T> Function() operation, {
   required FutureOr<DomainError> Function(Object rawError, StackTrace stackTrace) mapToDomainError,
   FutureOr<void> Function(DomainError domainError, StackTrace stackTrace)? onDomainError,
@@ -25,20 +25,20 @@ Future<Result<T>> captureResult<T>(
   FutureOr<void> Function(Object observerError, StackTrace stackTrace)? onObserverError,
 }) async {
   try {
-    return Either.success(await operation());
+    return Result.success(await operation());
   } on Object catch (error, stackTrace) {
     if (error is DomainError) {
       await _observe(onDomainError, error, stackTrace, onObserverError);
-      return Either.error(error);
+      return Result.error(error);
     }
 
     await _observe(onRawError, error, stackTrace, onObserverError);
     final domainError = await mapToDomainError(error, stackTrace);
-    return Either.error(domainError);
+    return Result.error(domainError);
   }
 }
 
-/// Runs [operation] synchronously and captures its outcome in a [Result].
+/// Runs [operation] synchronously and captures its outcome in a [DomainResult].
 ///
 /// Uses the same error routing as [captureResult]. The mapper and observers
 /// complete synchronously. Observers return `Null`, so async functions and
@@ -52,7 +52,7 @@ Future<Result<T>> captureResult<T>(
 ///
 /// Observer failures never replace the result. Mapper failures propagate with
 /// their original stack trace.
-Result<T> captureResultSync<T>(
+DomainResult<T> captureResultSync<T>(
   T Function() operation, {
   required DomainError Function(Object rawError, StackTrace stackTrace) mapToDomainError,
   Null Function(DomainError domainError, StackTrace stackTrace)? onDomainError,
@@ -60,16 +60,16 @@ Result<T> captureResultSync<T>(
   Null Function(Object observerError, StackTrace stackTrace)? onObserverError,
 }) {
   try {
-    return Either.success(operation());
+    return Result.success(operation());
   } on Object catch (error, stackTrace) {
     if (error is DomainError) {
       _observeSync(onDomainError, error, stackTrace, onObserverError);
-      return Either.error(error);
+      return Result.error(error);
     }
 
     _observeSync(onRawError, error, stackTrace, onObserverError);
     final domainError = mapToDomainError(error, stackTrace);
-    return Either.error(domainError);
+    return Result.error(domainError);
   }
 }
 
