@@ -21,6 +21,29 @@ Requires Dart 3.0.0 or later within Dart 3. The package is pure Dart and has no
 Flutter SDK dependency. A separate consumer checks Flutter 3.10.0 and current stable
 without dependency overrides.
 
+## Package skill
+
+Install portable error-handling guidance for projects using domain_error:
+
+```bash
+npx skills add andrey-krasheninnikov/domain_error --skill flutter-domain-errors
+```
+
+Installation is project-local by default. To select clients explicitly, add
+`--agent codex claude-code`; add `--global` only when you want user-wide scope.
+The [skills CLI](https://github.com/vercel-labs/skills) requires a compatible
+Node.js installation. No separate npm package is needed.
+
+The [flutter-domain-errors skill](https://github.com/andrey-krasheninnikov/domain_error/tree/main/skills/flutter-domain-errors)
+covers pure Dart and Flutter with separate 3.x, 4.x, and 5.x contracts. It checks
+the applicable package's direct dependency and resolved API before applying
+rules. Older or unresolved versions require source inspection. It does not
+upgrade dependencies, migrate untouched code, or impose an application architecture.
+
+Automatic selection depends on client support and task relevance; installation
+alone does not prove selection. See the skill's validation notes for exercised
+client versions and scenarios.
+
 ## Model errors
 
 ![Domain error fields, feature hierarchy, and stable identifiers](assets/flow.png)
