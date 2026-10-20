@@ -212,6 +212,15 @@ Applications that need observer diagnostics should supply `onObserverError`.
 `fold`, `map`, `typeIdentifier`, `message`, `stackTrace`, `onDomainError`, and
 `onRawError` retain their names.
 
+## Project documentation
+
+- [Domain glossary](GLOSSARY.md)
+- [Architecture decisions](docs/adr/)
+- [Repository guidance](AGENTS.md)
+- Workflow configuration: [issue tracker](docs/agents/issue-tracker.md),
+  [triage labels](docs/agents/triage-labels.md), and
+  [domain documentation](docs/agents/domain.md).
+
 ## Development
 
 Run `make deps`, then `make check`. The check target does not rewrite source files.
