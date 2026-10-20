@@ -1,3 +1,11 @@
+## 5.0.3
+
+- Rebuild the README with a technical cover, scenario-based guide, API map,
+  compatibility information and a consolidated migration to 5.x.
+- Check the exact README programs, links and navigation in the Dart CI matrix.
+- Use canonical repository links and retain the published skill installation.
+- Keep public APIs, runtime behavior, dependencies and SDK requirements unchanged.
+
 ## 5.0.2
 
 - Publish flutter-domain-errors with version-aware rules and runnable examples

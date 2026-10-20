@@ -1,14 +1,16 @@
 name: domain_error
 description: Domain errors with Result, DomainResult, and captureResult for expected errors in Dart applications.
-version: 5.0.2
-repository: https://github.com/pchkauu/domain_error
-homepage: https://github.com/pchkauu/domain_error
-issue_tracker: https://github.com/pchkauu/domain_error/issues
+version: 5.0.3
+repository: https://github.com/andrey-krasheninnikov/domain_error
+homepage: https://github.com/andrey-krasheninnikov/domain_error
+issue_tracker: https://github.com/andrey-krasheninnikov/domain_error/issues
 topics:
   - error-handling
   - domain
   - exceptions
 screenshots:
+  - description: Domain errors and explicit success or error results for Dart and Flutter.
+    path: assets/cover.png
   - description: The complete journey from operation outcome through captureResult to fold.
     path: assets/overview.png
   - description: DomainError fields, feature hierarchy, and stable type identifiers.

@@ -32,10 +32,14 @@ cleanup() {
 }
 trap cleanup EXIT
 trap 'exit 1' HUP INT TERM
-for diagram in overview flow fold; do
-  "$chrome_bin" --headless=new --disable-gpu --no-sandbox \
+for diagram in cover overview flow fold; do
+  height=900
+  if [ "$diagram" = cover ]; then
+    height=640
+  fi
+  "$chrome_bin" --headless=new --disable-gpu \
     --disable-background-networking --disable-component-update --disable-sync \
-    --hide-scrollbars --force-device-scale-factor=1 --window-size=1600,900 \
+    --hide-scrollbars --force-device-scale-factor=1 --window-size="1600,$height" \
     --user-data-dir="$render_tmp/$diagram" \
     --screenshot="$render_tmp/$diagram.png" \
     "file://$project_dir/assets/$diagram.html" >"$render_tmp/$diagram.log" 2>&1 &

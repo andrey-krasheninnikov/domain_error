@@ -43,8 +43,11 @@
         <h2><code>fold</code> handles either outcome</h2>
         <pre class="fold-code">result.fold(onError, onSuccess)</pre>
         <h2 class="map-heading"><code>map</code> transforms success only</h2>
-        <div class="map-line"><pre>Result.success(7)
-  .map((value) =&gt; value * 2)</pre><code>→ 14</code></div>
+        <div class="map-line"><pre>Result.success(7).map(
+  (value) {
+    return value * 2;
+  },
+)</pre><code>→ 14</code></div>
         <div class="map-line"><pre>Result.error(error).map(transform)</pre><code>→ error</code></div>
         <p class="map-note">Both stay wrapped in Result. Errors skip the transform.</p>
       </section>
