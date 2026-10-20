@@ -1,3 +1,11 @@
+## 5.0.1
+
+- Concentrate symmetric payload equality in one private function shared by both
+  Result branches, preserving comparison order, type checks, hashing, and the
+  public interface.
+- Record the focused architecture review and rejected broader refactors in
+  [ADR 0006](https://github.com/andrey-krasheninnikov/domain_error/blob/main/docs/adr/0006-payload-equality.md).
+
 ## 5.0.0
 
 - Rename the generic outcome to `Result<T, E>`, with the success type first.
