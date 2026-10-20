@@ -1,3 +1,10 @@
+## 5.0.2
+
+- Publish flutter-domain-errors with version-aware rules and runnable examples
+  for domain_error 3.x, 4.x, and 5.x through the standard skills CLI.
+- Document project-local and optional global installation. Dart APIs, runtime
+  behavior, dependencies, and SDK requirements remain unchanged.
+
 ## 5.0.1
 
 - Concentrate symmetric payload equality in one private function shared by both

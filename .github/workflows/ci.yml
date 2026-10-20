@@ -27,6 +27,9 @@ jobs:
       - run: make check
       - run: dart run example/domain_error_example.dart
       - run: dart --enable-asserts run example/composition_example.dart
+      - name: Check portable examples on minimum Dart
+        if: matrix.sdk == '3.0.0'
+        run: python3 -B tool/skill_checks/check.py --versions 3.1.0 4.0.0 current
 
   flutter-consumer:
     runs-on: ubuntu-latest
@@ -57,3 +60,42 @@ jobs:
         if: matrix.flutter == '3.10.0'
         run: make flutter-check
       - run: git diff --exit-code
+
+  skills:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: python3 -B -m unittest discover -s tool/skill_checks
+      - run: python3 -B tool/skill_checks/check.py
+      - name: Check isolated project and disposable global installation
+        env:
+          DISABLE_TELEMETRY: '1'
+        run: |
+          project="$(mktemp -d)"
+          trap 'rm -rf "$project"' EXIT
+          mkdir -p "$project/.agents/skills/retained-check" "$HOME/.agents/skills/retained-check"
+          printf '%s\n' 'Retain this skill' > "$project/.agents/skills/retained-check/control.txt"
+          printf '%s\n' 'Retain this skill' > "$HOME/.agents/skills/retained-check/control.txt"
+          cd "$project"
+          npx --yes skills@1.7.4 add "$GITHUB_WORKSPACE" --skill flutter-domain-errors --agent codex claude-code --yes
+          npx --yes skills@1.7.4 add "$GITHUB_WORKSPACE" --skill flutter-domain-errors --agent codex claude-code --global --yes
+          SKILL_PROJECT="$project" python3 - <<'PY'
+          import os
+          from pathlib import Path
+          source = Path(os.environ['GITHUB_WORKSPACE']) / 'skills/flutter-domain-errors'
+          for base in (Path(os.environ['SKILL_PROJECT']), Path.home()):
+              assert (base / '.agents/skills/retained-check/control.txt').read_text() == 'Retain this skill\n'
+              for directory in ('.agents/skills', '.claude/skills'):
+                  installed = base / directory / 'flutter-domain-errors'
+                  for path in source.rglob('*'):
+                      if path.is_file():
+                          assert (installed / path.relative_to(source)).read_bytes() == path.read_bytes()
+          PY
