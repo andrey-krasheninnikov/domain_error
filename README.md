@@ -886,7 +886,7 @@ compatibility aliases.
 | 3.x / 4.x `EitherError<L, R>` / `EitherSuccess<L, R>` | `ResultError<R, L>` / `ResultSuccess<R, L>` |
 | 2.x / 3.x / 4.x domain `Result<T>` / `FutureResult<T>` aliases | `DomainResult<T>` / `FutureDomainResult<T>` |
 | 2.x / 3.x / 4.x `successValue`; 3.x / 4.x `errorValue` | `value`; `error`, including named pattern fields |
-| 3.x / 4.x `ResultDomainError<T>` | `DomainResultError<T>`; `domainError` remains |
+| 2.x / 3.x / 4.x `ResultDomainError<T>` | `DomainResultError<T>`; `domainError` remains |
 | 4.x `FutureEitherOperations<L, R>` | `FutureResult<R, L>` extension; it is not a typedef |
 
 Reorder both generic arguments, including inside collections, futures, bounds,
