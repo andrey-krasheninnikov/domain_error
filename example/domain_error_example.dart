@@ -4,7 +4,7 @@ import 'dart:async';
 
 import 'package:domain_error/domain_error.dart';
 
-/// Loads an order and prints `successValue` / `errorValue` for typical outcomes.
+/// Loads an order and prints `value` / `error` for typical outcomes.
 Future<void> main() async {
   const logPrefix = 'main():';
 
@@ -37,7 +37,7 @@ Future<void> main() async {
     print(
       result.fold(
         (domainError) => '$logPrefix $domainError',
-        (successValue) => '$logPrefix $successValue',
+        (value) => '$logPrefix $value',
       ),
     );
   }
@@ -51,7 +51,7 @@ Future<void> main() async {
   print(
     syncResult.fold(
       (domainError) => '$logPrefix sync $domainError',
-      (successValue) => '$logPrefix sync $successValue',
+      (value) => '$logPrefix sync $value',
     ),
   );
 }

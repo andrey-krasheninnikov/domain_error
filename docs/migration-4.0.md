@@ -1,5 +1,8 @@
 # Migrate from domain_error 3.x to 4.0
 
+This guide describes the 3.x to 4.0 migration. For current names, continue with
+[the 4.0 to 5.0 guide](migration-5.0.md).
+
 Use `domain_error: ^4.0.0`. Keep the public import
 `package:domain_error/domain_error.dart`. Dart >=3.0.0 <4.0.0 and Flutter 3.10.0
 remain supported.
@@ -116,7 +119,7 @@ Keep existing typeIdentifier strings and domain error equality rules. Diagnostic
 cause and stackTrace remain outside equality. Composition preserves unchanged
 payload references; do not depend on the identity of an Either wrapper.
 
-Run [the complete example](../example/migration_v4.dart), which defines SampleError
+Run [the complete example](https://github.com/andrey-krasheninnikov/domain_error/blob/v4.0.0/example/migration_v4.dart), which defines SampleError
 and exercises capture, observation, chaining, translation, recovery, and null:
 
 ```sh

@@ -22,7 +22,15 @@ another domain error.
 _Avoid_: Raw error when referring to stored diagnostic context.
 
 **Result**:
-An operation outcome containing either a domain error or a success value.
+An operation outcome containing either an error value or a success value.
+The error value need not be a domain error.
+
+**Domain result**:
+A result whose error value is a domain error.
+
+**Error value**:
+The error held by an unsuccessful result. It is distinct from a thrown raw
+error or a failure in an observer or mapper.
 
 **Success value**:
 The value produced by an operation that completes successfully.

@@ -1,5 +1,8 @@
 # Compose results with explicit synchronous and asynchronous contracts
 
+Naming in this decision describes 4.0. The contracts remain current;
+[ADR 0005](0005-result-naming.md) records the 5.0 source migration.
+
 ## Problem
 
 How can Dart and Flutter callers compose result-returning operations without

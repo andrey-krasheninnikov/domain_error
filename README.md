@@ -5,14 +5,16 @@
 Turn thrown errors into values you can fold.
 
 A `DomainError` represents an expected domain or application error.
-`Result<T>` is `Either<DomainError, T>`; `FutureResult<T>` is `Future<Result<T>>`.
+`Result<T, E>` holds a success value of T or an error of E.
+`DomainResult<T>` is `Result<T, DomainError>`;
+`FutureDomainResult<T>` is `Future<DomainResult<T>>`.
 Use `captureResult` for asynchronous work and `captureResultSync` for synchronous work.
 
 ## Install
 
 ```yaml
 dependencies:
-  domain_error: ^4.0.0
+  domain_error: ^5.0.0
 ```
 
 Requires Dart 3.0.0 or later within Dart 3. The package is pure Dart and has no
@@ -75,7 +77,7 @@ cause, only the identifier is returned. The full fields remain available.
 
 ## Capture and fold
 
-![Async and sync capture, Either branches, fold, and map](assets/fold.png)
+![Async and sync capture, Result branches, fold, and map](assets/fold.png)
 
 ```dart
 final result = await captureResult<Order>(
@@ -96,7 +98,7 @@ final result = await captureResult<Order>(
 
 result.fold(
   (domainError) => print(domainError.typeIdentifier),
-  (successValue) => print(successValue.title),
+  (value) => print(value.title),
 );
 
 final syncResult = captureResultSync<Order>(
@@ -112,8 +114,8 @@ Runnable sample, including `Order`, `loadOrder`, and timeout mapping:
 
 The handling order is explicit:
 
-1. A successful operation returns `Either.success`; no callbacks run.
-2. A thrown `DomainError` triggers `onDomainError`, then returns `Either.error`
+1. A successful operation returns `Result.success`; no callbacks run.
+2. A thrown `DomainError` triggers `onDomainError`, then returns `Result.error`
    containing the same error object.
 3. Any other thrown object triggers `onRawError`, then `mapToDomainError`.
    The mapped error is returned without triggering `onDomainError` again.
@@ -133,25 +135,25 @@ The synchronous operation stores its returned `T` unchanged. If `T` is a
 `Future`, the result contains that future without awaiting it or capturing its
 later errors. Use `captureResult` to capture asynchronous completion.
 
-## Work with Either
+## Work with Result
 
-`Either<L, R>` also supports error values that are not `DomainError` instances.
+`Result<T, E>` also supports error values that are not `DomainError` instances.
 
 ```dart
-const success = Either<String, int>.success(7);
-const error = Either<String, int>.error('missing');
+const success = Result<int, String>.success(7);
+const error = Result<int, String>.error('missing');
 
 final doubled = success.map((value) => value * 2);
-assert(doubled.successValue == 14);
+assert(doubled.value == 14);
 assert(error.isError);
 assert(success.isSuccess);
-assert(error.errorValue == 'missing');
+assert(error.error == 'missing');
 ```
 
 `map` transforms only the success value. It preserves the error payload without
 calling the transform. Accessing the wrong branch getter throws `StateError`;
 use `fold` or pattern matching to handle both branches. `domainError` is available
-only on `Result<T>` and also throws on a successful result. Nullable payloads
+only on `DomainResult<T>` and also throws on a successful result. Nullable payloads
 remain valid values of their respective branches.
 
 Equality requires the same concrete result type, including both type arguments
@@ -170,16 +172,16 @@ final result = await captureResult<int>(
   () async => 20,
   mapToDomainError: (error, trace) => OrderUnavailableError(cause: error, stackTrace: trace),
 )
-    .andThen((value) async => Either.success(value + 1))
+    .andThen((value) async => Result.success(value + 1))
     .map((value) => value * 2)
     .mapError((error) => error)
-    .recover((error) => const Either.success(-1));
+    .recover((error) => const Result.success(-1));
 
-assert(result.successValue == 42);
+assert(result.value == 42);
 ```
 
-On an existing `Either`, use `mapAsync`, `andThenAsync`, `mapErrorAsync`, or
-`recoverAsync` to await a callback. On `Future<Either<L, R>>`, the corresponding
+On an existing `Result`, use `mapAsync`, `andThenAsync`, `mapErrorAsync`, or
+`recoverAsync` to await a callback. On `Future<Result<T, E>>`, the corresponding
 unsuffixed methods await both the source and the selected `FutureOr` callback.
 Finish with `fold` after the final `await`.
 
@@ -191,7 +193,7 @@ operation explicitly when it should become a domain error.
 
 ### Keep payloads immutable
 
-`Either` stores its payload by reference and does not copy it. A mutable payload
+`Result` stores its payload by reference and does not copy it. A mutable payload
 can change equality and hashing, making an existing map key or set element
 unfindable. Keep nested collections immutable too. Take explicit snapshots with
 standard collections when necessary:
@@ -202,16 +204,28 @@ final snapshot = Map<String, List<int>>.unmodifiable({
   for (final entry in source.entries)
     entry.key: List<int>.unmodifiable(entry.value),
 });
-final result = Either<String, Map<String, List<int>>>.success(snapshot);
+final result = Result<Map<String, List<int>>, String>.success(snapshot);
 final results = {result};
 
 source['items']!.add(3);
-assert(result.successValue['items']!.length == 2);
+assert(result.value['items']!.length == 2);
 assert(results.contains(result));
 ```
 
 Copy every mutable layer you own. An unmodifiable outer collection alone does
 not protect mutable elements or nested collections.
+
+## Migrate from 4.x to 5.0.0
+
+Use `Result<T, E>` for generic outcomes and `DomainResult<T>` when the error is a
+`DomainError`. Replace `FutureResult<T>` annotations with `FutureDomainResult<T>`.
+The success type now comes first. Branch getters are `error` and `value`;
+constructors use the full words `Result.error` and `Result.success`.
+
+See the [complete migration table](https://github.com/andrey-krasheninnikov/domain_error/blob/main/docs/migration-5.0.md)
+and runnable [composition example](example/composition_example.dart). There are
+no compatibility aliases. Package/import identity, callback behavior, error
+messages, stable identifiers, and SDK minimums remain unchanged.
 
 ## Migrate from 3.x to 4.0.0
 
@@ -221,8 +235,8 @@ Sync observers now return `Null`; wrap existing synchronous `void` functions
 and use the async API for asynchronous observers.
 
 See the [complete migration guide](https://github.com/andrey-krasheninnikov/domain_error/blob/main/docs/migration-4.0.md)
-and the runnable [migration example](example/migration_v4.dart). The public
-import, domain error identity, SDK minimums, and existing result names remain.
+and the runnable [4.0 migration example](https://github.com/andrey-krasheninnikov/domain_error/blob/v4.0.0/example/migration_v4.dart). In 4.0, the public import, domain error identity, SDK minimums, and existing
+result names remained unchanged. For 5.0 names, apply the migration above.
 
 ## Migrate from 2.x to 3.0.0
 
@@ -252,9 +266,9 @@ and different concrete generic result types compare unequal in both directions.
 String descriptions now consistently use one line and tolerate failing causes.
 Applications that need observer diagnostics should supply `onObserverError`.
 
-`DomainError`, `Either`, `Result`, `FutureResult`, `domainError`, `successValue`,
+In 3.0, `DomainError`, `Either`, `Result`, `FutureResult`, `domainError`, `successValue`,
 `fold`, `map`, `typeIdentifier`, `message`, `stackTrace`, `onDomainError`, and
-`onRawError` retain their names.
+`onRawError` retained their names.
 
 ## Project documentation
 
