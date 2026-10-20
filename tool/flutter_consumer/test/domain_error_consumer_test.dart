@@ -5,9 +5,7 @@ void main() {
   test('captures and transforms a synchronous success in Flutter', () {
     final result = captureResultSync(
       () => 21,
-      options: CaptureResultSyncOptions(
-        mapToDomainError: (error, stackTrace) => _ConsumerError(cause: error, stackTrace: stackTrace),
-      ),
+      mapToDomainError: (error, stackTrace) => _ConsumerError(cause: error, stackTrace: stackTrace),
     );
 
     expect(result.map((value) => value * 2).fold((error) => -1, (value) => value), 42);
@@ -17,9 +15,7 @@ void main() {
     const original = _ConsumerError();
     final result = await captureResult<int>(
       () async => throw original,
-      options: CaptureResultOptions(
-        mapToDomainError: (error, stackTrace) => _ConsumerError(cause: error, stackTrace: stackTrace),
-      ),
+      mapToDomainError: (error, stackTrace) => _ConsumerError(cause: error, stackTrace: stackTrace),
     );
 
     expect(result.domainError, same(original));
@@ -29,13 +25,46 @@ void main() {
     final cause = StateError('connection failed');
     final result = await captureResult<int>(
       () async => throw cause,
-      options: CaptureResultOptions(
-        mapToDomainError: (error, stackTrace) => _ConsumerError(cause: error, stackTrace: stackTrace),
-      ),
+      mapToDomainError: (error, stackTrace) => _ConsumerError(cause: error, stackTrace: stackTrace),
     );
 
     expect(result.domainError.cause, same(cause));
     expect(result.domainError.stackTrace, isNotNull);
+  });
+
+  test('composes and recovers asynchronous results in Flutter', () async {
+    const original = _ConsumerError();
+    final result = await captureResult<int>(
+      () async => 21,
+      mapToDomainError: (error, trace) => _ConsumerError(cause: error, stackTrace: trace),
+    )
+        .andThen((value) async => const Either<DomainError, int>.error(original))
+        .map<int>((value) => throw StateError('must skip'))
+        .mapError((error) {
+      expect(error, same(original));
+      return error;
+    }).recover((error) async => const Either.success(42));
+    expect(result.successValue, 42);
+  });
+
+  test('sync observers wrap void functions and nullable values stay valid', () {
+    Object? observed;
+    void observe(Object error, StackTrace trace) {
+      observed = error;
+    }
+
+    const original = _ConsumerError();
+    final result = captureResultSync<int?>(
+      () => throw original,
+      mapToDomainError: (error, trace) => throw StateError('must skip'),
+      onDomainError: (error, trace) {
+        observe(error, trace);
+        return null;
+      },
+    ).recover((error) => const Either.success(null));
+    expect(observed, same(original));
+    expect(result.isSuccess, isTrue);
+    expect(result.successValue, isNull);
   });
 
   test('compares collection payloads deeply in Flutter', () {

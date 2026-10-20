@@ -26,6 +26,7 @@ jobs:
       - run: make deps
       - run: make check
       - run: dart run example/domain_error_example.dart
+      - run: dart --enable-asserts run example/migration_v4.dart
 
   flutter-consumer:
     runs-on: ubuntu-latest
