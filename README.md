@@ -12,7 +12,7 @@ Use `captureResult` for asynchronous work and `captureResultSync` for synchronou
 
 ```yaml
 dependencies:
-  domain_error: ^3.1.0
+  domain_error: ^4.0.0
 ```
 
 Requires Dart 3.0.0 or later within Dart 3. The package is pure Dart and has no
@@ -80,20 +80,18 @@ cause, only the identifier is returned. The full fields remain available.
 ```dart
 final result = await captureResult<Order>(
   () => loadOrder(id: id),
-  options: CaptureResultOptions(
-    mapToDomainError: (rawError, stackTrace) {
-      return OrderUnavailableError(cause: rawError, stackTrace: stackTrace);
-    },
-    onDomainError: (domainError, stackTrace) {
-      print('${domainError.typeIdentifier}: $stackTrace');
-    },
-    onRawError: (rawError, stackTrace) {
-      print('$rawError: $stackTrace');
-    },
-    onObserverError: (observerError, stackTrace) {
-      print('Observer failed: $observerError: $stackTrace');
-    },
-  ),
+  mapToDomainError: (rawError, stackTrace) {
+    return OrderUnavailableError(cause: rawError, stackTrace: stackTrace);
+  },
+  onDomainError: (domainError, stackTrace) {
+    print('${domainError.typeIdentifier}: $stackTrace');
+  },
+  onRawError: (rawError, stackTrace) {
+    print('$rawError: $stackTrace');
+  },
+  onObserverError: (observerError, stackTrace) {
+    print('Observer failed: $observerError: $stackTrace');
+  },
 );
 
 result.fold(
@@ -103,11 +101,9 @@ result.fold(
 
 final syncResult = captureResultSync<Order>(
   () => loadOrder(id: id),
-  options: CaptureResultSyncOptions(
-    mapToDomainError: (rawError, stackTrace) {
-      return OrderUnavailableError(cause: rawError, stackTrace: stackTrace);
-    },
-  ),
+  mapToDomainError: (rawError, stackTrace) {
+    return OrderUnavailableError(cause: rawError, stackTrace: stackTrace);
+  },
 );
 ```
 
@@ -128,10 +124,14 @@ The handling order is explicit:
    observer failures and do not become a fallback `DomainError`.
 
 `captureResult` awaits the operation, observers, observer error handler, and mapper.
-`captureResultSync` requires **every callback to be synchronous**. Dart allows an
-async function in a `void` observer slot, but this is unsupported: its future is
-not awaited and its asynchronous failures are not captured. There is no static
-or runtime rejection. Use `captureResult` whenever any callback is asynchronous.
+`captureResultSync` requires a synchronous mapper and observers. All three
+observers return `Null`, so async functions and `void` tear-offs are rejected by
+type checking. Wrap a synchronous `void` function in a block returning null.
+Use `captureResult` when observation is asynchronous.
+
+The synchronous operation stores its returned `T` unchanged. If `T` is a
+`Future`, the result contains that future without awaiting it or capturing its
+later errors. Use `captureResult` to capture asynchronous completion.
 
 ## Work with Either
 
@@ -158,6 +158,37 @@ Equality requires the same concrete result type, including both type arguments
 and the branch, plus deeply equal payloads. Equality is checked in both directions.
 The hash includes the result type and the deep payload hash.
 
+### Compose operations
+
+`andThen` runs a result-returning operation on success. `mapError` transforms
+only an error. `recover` handles only an error and returns another result with
+the same error and success types, allowing a selected fallback or an unchanged
+error. Skipped callbacks never run; steps run once, in order.
+
+```dart
+final result = await captureResult<int>(
+  () async => 20,
+  mapToDomainError: (error, trace) => OrderUnavailableError(cause: error, stackTrace: trace),
+)
+    .andThen((value) async => Either.success(value + 1))
+    .map((value) => value * 2)
+    .mapError((error) => error)
+    .recover((error) => const Either.success(-1));
+
+assert(result.successValue == 42);
+```
+
+On an existing `Either`, use `mapAsync`, `andThenAsync`, `mapErrorAsync`, or
+`recoverAsync` to await a callback. On `Future<Either<L, R>>`, the corresponding
+unsuffixed methods await both the source and the selected `FutureOr` callback.
+Finish with `fold` after the final `await`.
+
+Composition preserves nullable payloads and unchanged payload references.
+Exceptions thrown by transforms or recovery functions propagate with their
+original objects and stack traces. A failed source future also propagates;
+`recover` handles an error payload, not a failed future. Capture a throwing
+operation explicitly when it should become a domain error.
+
 ### Keep payloads immutable
 
 `Either` stores its payload by reference and does not copy it. A mutable payload
@@ -181,6 +212,17 @@ assert(results.contains(result));
 
 Copy every mutable layer you own. An unmodifiable outer collection alone does
 not protect mutable elements or nested collections.
+
+## Migrate from 3.x to 4.0.0
+
+Move the fields of `CaptureResultOptions` and `CaptureResultSyncOptions` directly
+to named function arguments. Both Options classes are removed without aliases.
+Sync observers now return `Null`; wrap existing synchronous `void` functions
+and use the async API for asynchronous observers.
+
+See the [complete migration guide](https://github.com/andrey-krasheninnikov/domain_error/blob/main/docs/migration-4.0.md)
+and the runnable [migration example](example/migration_v4.dart). The public
+import, domain error identity, SDK minimums, and existing result names remain.
 
 ## Migrate from 2.x to 3.0.0
 

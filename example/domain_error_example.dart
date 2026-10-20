@@ -16,24 +16,22 @@ Future<void> main() async {
         }
         return loadOrder(id: id);
       },
-      options: CaptureResultOptions(
-        mapToDomainError: (rawError, stackTrace) {
-          if (rawError is TimeoutException) {
-            return const OrderTimeoutError();
-          } else {
-            return OrderUnavailableError(cause: rawError, stackTrace: stackTrace);
-          }
-        },
-        onDomainError: (domainError, stackTrace) async {
-          print('$logPrefix ${domainError.typeIdentifier} $stackTrace');
-        },
-        onRawError: (rawError, stackTrace) async {
-          print('$logPrefix $rawError $stackTrace');
-        },
-        onObserverError: (observerError, stackTrace) {
-          print('$logPrefix observer failed: $observerError $stackTrace');
-        },
-      ),
+      mapToDomainError: (rawError, stackTrace) {
+        if (rawError is TimeoutException) {
+          return const OrderTimeoutError();
+        } else {
+          return OrderUnavailableError(cause: rawError, stackTrace: stackTrace);
+        }
+      },
+      onDomainError: (domainError, stackTrace) async {
+        print('$logPrefix ${domainError.typeIdentifier} $stackTrace');
+      },
+      onRawError: (rawError, stackTrace) async {
+        print('$logPrefix $rawError $stackTrace');
+      },
+      onObserverError: (observerError, stackTrace) {
+        print('$logPrefix observer failed: $observerError $stackTrace');
+      },
     );
 
     print(
@@ -46,11 +44,9 @@ Future<void> main() async {
 
   final syncResult = captureResultSync<Order>(
     () => loadOrder(id: '42'),
-    options: CaptureResultSyncOptions(
-      mapToDomainError: (rawError, stackTrace) {
-        return OrderUnavailableError(cause: rawError, stackTrace: stackTrace);
-      },
-    ),
+    mapToDomainError: (rawError, stackTrace) {
+      return OrderUnavailableError(cause: rawError, stackTrace: stackTrace);
+    },
   );
   print(
     syncResult.fold(

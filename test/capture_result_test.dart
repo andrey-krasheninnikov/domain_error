@@ -10,12 +10,10 @@ void main() {
       final observations = <String>[];
       final result = captureResult<int>(
         () => operation.future,
-        options: CaptureResultOptions(
-          mapToDomainError: (_, __) => throw StateError('unexpected mapper'),
-          onDomainError: (_, __) => observations.add('domain'),
-          onRawError: (_, __) => observations.add('raw'),
-          onObserverError: (_, __) => observations.add('observer error'),
-        ),
+        mapToDomainError: (_, __) => throw StateError('unexpected mapper'),
+        onDomainError: (_, __) => observations.add('domain'),
+        onRawError: (_, __) => observations.add('raw'),
+        onObserverError: (_, __) => observations.add('observer error'),
       );
       operation.complete(9);
       expect((await result).successValue, 9);
@@ -31,20 +29,18 @@ void main() {
         StackTrace? observedTrace;
         final result = captureResult<int>(
           () => operation.future,
-          options: CaptureResultOptions(
-            onDomainError: (error, stackTrace) {
-              observed = error;
-              observedTrace = stackTrace;
-            },
-            onRawError: (error, stackTrace) {
-              observed = error;
-              observedTrace = stackTrace;
-            },
-            mapToDomainError: (error, stackTrace) async {
-              expect(domainCase, isFalse);
-              return _TestDomainError(cause: error, stackTrace: stackTrace);
-            },
-          ),
+          onDomainError: (error, stackTrace) {
+            observed = error;
+            observedTrace = stackTrace;
+          },
+          onRawError: (error, stackTrace) {
+            observed = error;
+            observedTrace = stackTrace;
+          },
+          mapToDomainError: (error, stackTrace) async {
+            expect(domainCase, isFalse);
+            return _TestDomainError(cause: error, stackTrace: stackTrace);
+          },
         );
         operation.completeError(original, trace);
         final captured = await result;
@@ -95,18 +91,16 @@ void main() {
 
             final result = await captureResult<int>(
               () => Error.throwWithStackTrace(original, operationTrace),
-              options: CaptureResultOptions(
-                onDomainError: domainCase ? observe : (_, __) => events.add('unexpected domain observer'),
-                onRawError: domainCase ? (_, __) => events.add('unexpected raw observer') : observe,
-                onObserverError: reporting == 'absent' ? null : report,
-                mapToDomainError: (error, stackTrace) {
-                  expect(domainCase, isFalse);
-                  expect(error, same(original));
-                  expect(stackTrace.toString(), operationTrace.toString());
-                  events.add('map');
-                  return _TestDomainError(cause: error, stackTrace: stackTrace);
-                },
-              ),
+              onDomainError: domainCase ? observe : (_, __) => events.add('unexpected domain observer'),
+              onRawError: domainCase ? (_, __) => events.add('unexpected raw observer') : observe,
+              onObserverError: reporting == 'absent' ? null : report,
+              mapToDomainError: (error, stackTrace) {
+                expect(domainCase, isFalse);
+                expect(error, same(original));
+                expect(stackTrace.toString(), operationTrace.toString());
+                events.add('map');
+                return _TestDomainError(cause: error, stackTrace: stackTrace);
+              },
             );
             expect(result.isError, isTrue);
             expect(reported, reporting == 'absent' ? 0 : 1);
@@ -131,24 +125,22 @@ void main() {
       final events = <String>[];
       final pending = captureResult<int>(
         () => throw StateError('operation failed'),
-        options: CaptureResultOptions(
-          onRawError: (_, __) async {
-            events.add('observe');
-            observerStarted.complete();
-            await observerGate.future;
-            throw StateError('observer failed');
-          },
-          onObserverError: (_, __) async {
-            events.add('report');
-            reporterStarted.complete();
-            await reporterGate.future;
-          },
-          mapToDomainError: (_, __) {
-            events.add('map');
-            mapperStarted.complete();
-            return mapperGate.future;
-          },
-        ),
+        onRawError: (_, __) async {
+          events.add('observe');
+          observerStarted.complete();
+          await observerGate.future;
+          throw StateError('observer failed');
+        },
+        onObserverError: (_, __) async {
+          events.add('report');
+          reporterStarted.complete();
+          await reporterGate.future;
+        },
+        mapToDomainError: (_, __) {
+          events.add('map');
+          mapperStarted.complete();
+          return mapperGate.future;
+        },
       );
       await observerStarted.future;
       expect(events, ['observe']);
@@ -170,14 +162,12 @@ void main() {
       const original = _TestDomainError();
       final pending = captureResult<int>(
         () => throw original,
-        options: CaptureResultOptions(
-          mapToDomainError: (_, __) => throw StateError('unexpected mapper'),
-          onDomainError: (_, __) async {
-            started.complete();
-            await gate.future;
-            finished = true;
-          },
-        ),
+        mapToDomainError: (_, __) => throw StateError('unexpected mapper'),
+        onDomainError: (_, __) async {
+          started.complete();
+          await gate.future;
+          finished = true;
+        },
       );
       await started.future;
       expect(finished, isFalse);
@@ -193,17 +183,15 @@ void main() {
         var reported = false;
         final pending = captureResult<int>(
           () => throw StateError('operation failed'),
-          options: CaptureResultOptions(
-            mapToDomainError: (_, __) {
-              if (asynchronous) {
-                return Future<DomainError>.error(mapperError, mapperTrace);
-              }
-              Error.throwWithStackTrace(mapperError, mapperTrace);
-            },
-            onObserverError: (_, __) {
-              reported = true;
-            },
-          ),
+          mapToDomainError: (_, __) {
+            if (asynchronous) {
+              return Future<DomainError>.error(mapperError, mapperTrace);
+            }
+            Error.throwWithStackTrace(mapperError, mapperTrace);
+          },
+          onObserverError: (_, __) {
+            reported = true;
+          },
         );
         try {
           await pending;
@@ -219,9 +207,7 @@ void main() {
     test('returns the successful value', () async {
       final result = await captureResult<int>(
         () => 7,
-        options: CaptureResultOptions(
-          mapToDomainError: (rawError, stackTrace) => _TestDomainError(cause: rawError),
-        ),
+        mapToDomainError: (rawError, stackTrace) => _TestDomainError(cause: rawError),
       );
 
       expect(result.isSuccess, isTrue);
@@ -234,12 +220,10 @@ void main() {
 
       final result = await captureResult<void>(
         () => throw error,
-        options: CaptureResultOptions(
-          mapToDomainError: (rawError, stackTrace) => _TestDomainError(cause: rawError),
-          onDomainError: (domainError, stackTrace) {
-            observedDomainError = domainError;
-          },
-        ),
+        mapToDomainError: (rawError, stackTrace) => _TestDomainError(cause: rawError),
+        onDomainError: (domainError, stackTrace) {
+          observedDomainError = domainError;
+        },
       );
 
       expect(result.isError, isTrue);
@@ -252,16 +236,14 @@ void main() {
 
       final result = await captureResult<void>(
         () => throw StateError('boom'),
-        options: CaptureResultOptions(
-          mapToDomainError: (rawError, stackTrace) => _TestDomainError(
-            message: 'mapped error',
-            cause: rawError,
-            stackTrace: stackTrace,
-          ),
-          onRawError: (rawError, stackTrace) {
-            observedRawError = rawError;
-          },
+        mapToDomainError: (rawError, stackTrace) => _TestDomainError(
+          message: 'mapped error',
+          cause: rawError,
+          stackTrace: stackTrace,
         ),
+        onRawError: (rawError, stackTrace) {
+          observedRawError = rawError;
+        },
       );
 
       expect(result.isError, isTrue);
@@ -284,14 +266,14 @@ void main() {
           Object? reportedError;
           StackTrace? reportedTrace;
 
-          void observe(Object error, StackTrace stackTrace) {
+          Null observe(Object error, StackTrace stackTrace) {
             expect(error, same(original));
             expect(stackTrace.toString(), trace.toString());
             events.add('observe');
             Error.throwWithStackTrace(observerError, observerTrace);
           }
 
-          void report(Object error, StackTrace stackTrace) {
+          Null report(Object error, StackTrace stackTrace) {
             reported++;
             events.add('report');
             reportedError = error;
@@ -299,22 +281,31 @@ void main() {
             if (reporting == 'failure') {
               throw StateError('report failed');
             }
+            return null;
           }
 
           final result = captureResultSync<int>(
             () => Error.throwWithStackTrace(original, trace),
-            options: CaptureResultSyncOptions(
-              onDomainError: domainCase ? observe : (_, __) => events.add('unexpected domain observer'),
-              onRawError: domainCase ? (_, __) => events.add('unexpected raw observer') : observe,
-              onObserverError: reporting == 'absent' ? null : report,
-              mapToDomainError: (error, stackTrace) {
-                expect(domainCase, isFalse);
-                expect(error, same(original));
-                expect(stackTrace.toString(), trace.toString());
-                events.add('map');
-                return _TestDomainError(cause: error, stackTrace: stackTrace);
-              },
-            ),
+            onDomainError: domainCase
+                ? observe
+                : (_, __) {
+                    events.add('unexpected domain observer');
+                    return null;
+                  },
+            onRawError: domainCase
+                ? (_, __) {
+                    events.add('unexpected raw observer');
+                    return null;
+                  }
+                : observe,
+            onObserverError: reporting == 'absent' ? null : report,
+            mapToDomainError: (error, stackTrace) {
+              expect(domainCase, isFalse);
+              expect(error, same(original));
+              expect(stackTrace.toString(), trace.toString());
+              events.add('map');
+              return _TestDomainError(cause: error, stackTrace: stackTrace);
+            },
           );
           expect(reported, reporting == 'absent' ? 0 : 1);
           if (reporting != 'absent') {
@@ -334,12 +325,11 @@ void main() {
       try {
         captureResultSync<int>(
           () => throw StateError('operation failed'),
-          options: CaptureResultSyncOptions(
-            mapToDomainError: (_, __) => Error.throwWithStackTrace(mapperError, mapperTrace),
-            onObserverError: (_, __) {
-              reported = true;
-            },
-          ),
+          mapToDomainError: (_, __) => Error.throwWithStackTrace(mapperError, mapperTrace),
+          onObserverError: (_, __) {
+            reported = true;
+            return null;
+          },
         );
         fail('mapper failure must propagate');
       } on Object catch (error, stackTrace) {
@@ -349,35 +339,24 @@ void main() {
       }
     });
 
-    test('unsupported async observer is not awaited by the sync API', () async {
-      final gate = Completer<void>();
-      final finished = Completer<void>();
-      var observed = false;
-      const original = _TestDomainError();
-      final result = captureResultSync<int>(
-        () => throw original,
-        options: CaptureResultSyncOptions(
-          mapToDomainError: (_, __) => throw StateError('unexpected mapper'),
-          onDomainError: (_, __) async {
-            await gate.future;
-            observed = true;
-            finished.complete();
-          },
-        ),
+    test('stores a Future payload without capturing its later failure', () async {
+      final gate = Completer<int>();
+      final original = StateError('later failure');
+      final trace = StackTrace.fromString('future payload trace');
+      final result = captureResultSync(
+        () => gate.future,
+        mapToDomainError: (_, __) => throw StateError('unexpected mapper'),
       );
-      expect(result.domainError, same(original));
-      expect(observed, isFalse);
-      gate.complete();
-      await finished.future;
-      expect(observed, isTrue);
+      expect(result.successValue, same(gate.future));
+      final failure = expectLater(result.successValue, throwsA(same(original)));
+      gate.completeError(original, trace);
+      await failure;
     });
 
     test('returns the successful value', () {
       final result = captureResultSync<int>(
         () => 7,
-        options: CaptureResultSyncOptions(
-          mapToDomainError: (rawError, stackTrace) => _TestDomainError(cause: rawError),
-        ),
+        mapToDomainError: (rawError, stackTrace) => _TestDomainError(cause: rawError),
       );
 
       expect(result.isSuccess, isTrue);
@@ -390,12 +369,11 @@ void main() {
 
       final result = captureResultSync<void>(
         () => throw error,
-        options: CaptureResultSyncOptions(
-          mapToDomainError: (rawError, stackTrace) => _TestDomainError(cause: rawError),
-          onDomainError: (domainError, stackTrace) {
-            observedDomainError = domainError;
-          },
-        ),
+        mapToDomainError: (rawError, stackTrace) => _TestDomainError(cause: rawError),
+        onDomainError: (domainError, stackTrace) {
+          observedDomainError = domainError;
+          return null;
+        },
       );
 
       expect(result.isError, isTrue);
@@ -408,16 +386,15 @@ void main() {
 
       final result = captureResultSync<void>(
         () => throw StateError('boom'),
-        options: CaptureResultSyncOptions(
-          mapToDomainError: (rawError, stackTrace) => _TestDomainError(
-            message: 'mapped error',
-            cause: rawError,
-            stackTrace: stackTrace,
-          ),
-          onRawError: (rawError, stackTrace) {
-            observedRawError = rawError;
-          },
+        mapToDomainError: (rawError, stackTrace) => _TestDomainError(
+          message: 'mapped error',
+          cause: rawError,
+          stackTrace: stackTrace,
         ),
+        onRawError: (rawError, stackTrace) {
+          observedRawError = rawError;
+          return null;
+        },
       );
 
       expect(result.isError, isTrue);

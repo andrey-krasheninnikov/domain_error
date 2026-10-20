@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 
@@ -56,6 +58,69 @@ sealed class Either<L, R> {
       EitherSuccess(:final successValue) => Either.success(transform(successValue)),
     };
   }
+
+  /// Chains a result-returning operation on success, skipping it on error.
+  /// Callback exceptions propagate without capture.
+  Either<L, R2> andThen<R2>(Either<L, R2> Function(R successValue) transform) {
+    return switch (this) {
+      EitherError(:final errorValue) => Either.error(errorValue),
+      EitherSuccess(:final successValue) => transform(successValue),
+    };
+  }
+
+  /// Maps the error value, leaving a success payload unchanged.
+  /// Callback exceptions propagate without capture.
+  Either<L2, R> mapError<L2>(L2 Function(L errorValue) transform) {
+    return switch (this) {
+      EitherError(:final errorValue) => Either.error(transform(errorValue)),
+      EitherSuccess(:final successValue) => Either.success(successValue),
+    };
+  }
+
+  /// Recovers an error with another result, leaving a success payload unchanged.
+  /// Callback exceptions propagate without capture.
+  Either<L, R> recover(Either<L, R> Function(L errorValue) onError) {
+    return switch (this) {
+      EitherError(:final errorValue) => onError(errorValue),
+      EitherSuccess() => this,
+    };
+  }
+
+  /// Awaits a success transform, leaving an error payload unchanged.
+  /// Callback exceptions complete the returned future with that error and trace.
+  Future<Either<L, R2>> mapAsync<R2>(FutureOr<R2> Function(R successValue) transform) async {
+    return switch (this) {
+      EitherError(:final errorValue) => Either.error(errorValue),
+      EitherSuccess(:final successValue) => Either.success(await transform(successValue)),
+    };
+  }
+
+  /// Awaits a result-returning operation on success, skipping it on error.
+  /// Callback exceptions propagate without capture.
+  Future<Either<L, R2>> andThenAsync<R2>(FutureOr<Either<L, R2>> Function(R successValue) transform) async {
+    return switch (this) {
+      EitherError(:final errorValue) => Either.error(errorValue),
+      EitherSuccess(:final successValue) => await transform(successValue),
+    };
+  }
+
+  /// Awaits an error transform, leaving a success payload unchanged.
+  /// Callback exceptions propagate without capture.
+  Future<Either<L2, R>> mapErrorAsync<L2>(FutureOr<L2> Function(L errorValue) transform) async {
+    return switch (this) {
+      EitherError(:final errorValue) => Either.error(await transform(errorValue)),
+      EitherSuccess(:final successValue) => Either.success(successValue),
+    };
+  }
+
+  /// Awaits recovery of an error, leaving a success payload unchanged.
+  /// Callback exceptions propagate without capture.
+  Future<Either<L, R>> recoverAsync(FutureOr<Either<L, R>> Function(L errorValue) onError) async {
+    return switch (this) {
+      EitherError(:final errorValue) => await onError(errorValue),
+      EitherSuccess() => this,
+    };
+  }
 }
 
 /// [Either] that holds an error value.
@@ -104,4 +169,27 @@ final class EitherSuccess<L, R> extends Either<L, R> {
         _payloadEquality.equals(successValue, other.successValue) &&
         _payloadEquality.equals(other.successValue, successValue);
   }
+}
+
+/// Composes asynchronous results without awaiting between individual steps.
+///
+/// Only the selected branch callback runs, after this future completes. A failed
+/// source future or callback completes the returned future with the original
+/// error and stack trace; [recover] handles error payloads, not failed futures.
+extension FutureEitherOperations<L, R> on Future<Either<L, R>> {
+  /// Awaits a success transform, leaving an error payload unchanged.
+  Future<Either<L, R2>> map<R2>(FutureOr<R2> Function(R successValue) transform) =>
+      then((result) => result.mapAsync(transform));
+
+  /// Awaits a result-returning operation on success, skipping it on error.
+  Future<Either<L, R2>> andThen<R2>(FutureOr<Either<L, R2>> Function(R successValue) transform) =>
+      then((result) => result.andThenAsync(transform));
+
+  /// Awaits an error transform, leaving a success payload unchanged.
+  Future<Either<L2, R>> mapError<L2>(FutureOr<L2> Function(L errorValue) transform) =>
+      then((result) => result.mapErrorAsync(transform));
+
+  /// Awaits recovery of an error, leaving a success payload unchanged.
+  Future<Either<L, R>> recover(FutureOr<Either<L, R>> Function(L errorValue) onError) =>
+      then((result) => result.recoverAsync(onError));
 }
