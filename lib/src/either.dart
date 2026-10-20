@@ -19,15 +19,15 @@ sealed class Either<L, R> {
 
   /// The error side of [Either].
   L get errorValue => switch (this) {
-    EitherError(:final errorValue) => errorValue,
-    EitherSuccess() => throw StateError('Either.success has no errorValue'),
-  };
+        EitherError(:final errorValue) => errorValue,
+        EitherSuccess() => throw StateError('Either.success has no errorValue'),
+      };
 
   /// The success side of [Either].
   R get successValue => switch (this) {
-    EitherSuccess(:final successValue) => successValue,
-    EitherError() => throw StateError('Either.error has no successValue'),
-  };
+        EitherSuccess(:final successValue) => successValue,
+        EitherError() => throw StateError('Either.error has no successValue'),
+      };
 
   /// Creates an [Either].
   const Either();

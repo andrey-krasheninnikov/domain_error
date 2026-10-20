@@ -1,6 +1,6 @@
 # Repository guidance
 
-`domain_error` is a Dart package. Use Dart 3.13.0 or later within Dart 3.
+`domain_error` is a Dart package. Use Dart 3.0.0 or later within Dart 3.
 The public entry point is `package:domain_error/domain_error.dart`.
 
 Keep changes focused. Preserve public contracts unless the task explicitly
@@ -9,6 +9,9 @@ tool attribution or invent authors, reviewers, or signatures.
 
 For Dart changes, run `make deps`, `make check`, and
 `dart run example/domain_error_example.dart`.
+For Flutter compatibility checks, run `make flutter-deps` and
+`make flutter-check` with Flutter 3.10.0 and current stable. The consumer
+fixture has its own dependency resolution; do not add Flutter to the library.
 For documentation changes, check links and run `git diff --check`.
 External writes require explicit task authorization.
 

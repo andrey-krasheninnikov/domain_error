@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-10-20
+
+### Changed
+
+- Lower the Dart SDK minimum to 3.0.0 and widen runtime dependency ranges for
+  Flutter 3.10.0 compatibility, preserving the public API and behavior.
+- Align development dependencies, callback test syntax, lint configuration, and
+  formatting commands with the supported minimum SDK.
+
+### Added
+
+- A separate Flutter consumer with public-interface tests on Flutter 3.10.0 and
+  current stable, including the lowest supported runtime dependencies.
+- Minimum and stable SDK checks for Dart and Flutter in CI.
+
 ## [3.0.0] - 2026-09-13
 
 ### Changed
@@ -78,7 +93,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `ExecuteSafelyOptions` with `mapThrownToError`, `onError`, and `onThrown`.
 
 [3.0.0]: https://github.com/pchkauu/domain_error/compare/v2.1.1...v3.0.0
-[unreleased]: https://github.com/pchkauu/domain_error/compare/v3.0.0...HEAD
+[3.1.0]: https://github.com/pchkauu/domain_error/compare/v3.0.0...v3.1.0
+[unreleased]: https://github.com/pchkauu/domain_error/compare/v3.1.0...HEAD
 [2.1.1]: https://github.com/pchkauu/domain_error/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/pchkauu/domain_error/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/pchkauu/domain_error/compare/v1.0.0...v2.0.0

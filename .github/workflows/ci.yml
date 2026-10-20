@@ -1,4 +1,4 @@
-name: Dart
+name: Dart and Flutter
 
 on:
   pull_request:
@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        sdk: ['3.13.0', stable]
+        sdk: ['3.0.0', stable]
     steps:
       - uses: actions/checkout@v7
         with:
@@ -26,3 +26,33 @@ jobs:
       - run: make deps
       - run: make check
       - run: dart run example/domain_error_example.dart
+
+  flutter-consumer:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        flutter: ['3.10.0', stable]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Install isolated Flutter SDK
+        env:
+          FLUTTER_REF: ${{ matrix.flutter }}
+        run: |
+          git clone --depth 1 --branch "$FLUTTER_REF" https://github.com/flutter/flutter.git "$RUNNER_TEMP/flutter"
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+      - run: flutter --version
+      - run: make flutter-deps
+      - run: make flutter-check
+      - name: Resolve lowest runtime dependencies
+        if: matrix.flutter == '3.10.0'
+        run: |
+          cd tool/flutter_consumer
+          flutter pub downgrade
+          flutter pub deps --style=compact
+      - name: Check lowest runtime dependencies
+        if: matrix.flutter == '3.10.0'
+        run: make flutter-check
+      - run: git diff --exit-code

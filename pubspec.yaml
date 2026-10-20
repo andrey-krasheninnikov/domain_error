@@ -1,6 +1,6 @@
 name: domain_error
 description: Domain errors with Either, Result, and captureResult for expected errors in Dart applications.
-version: 3.0.0
+version: 3.1.0
 repository: https://github.com/pchkauu/domain_error
 homepage: https://github.com/pchkauu/domain_error
 issue_tracker: https://github.com/pchkauu/domain_error/issues
@@ -17,7 +17,7 @@ screenshots:
     path: assets/fold.png
 
 environment:
-  sdk: ^3.13.0
+  sdk: '>=3.0.0 <4.0.0'
 
 platforms:
   android:
@@ -28,10 +28,10 @@ platforms:
   windows:
 
 dependencies:
-  collection: ^1.18.0
+  collection: ^1.17.1
   equatable: ^2.0.7
-  meta: ^1.12.0
+  meta: ^1.9.1
 
 dev_dependencies:
-  lints: ^6.0.0
-  test: ^1.25.6
+  lints: ^3.0.0
+  test: ^1.25.5

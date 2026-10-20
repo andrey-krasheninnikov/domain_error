@@ -1,0 +1,17 @@
+name: domain_error_flutter_consumer
+description: Compatibility checks for domain_error in Flutter applications.
+publish_to: none
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  domain_error:
+    path: ../..
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  lints: ^3.0.0

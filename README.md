@@ -12,10 +12,12 @@ Use `captureResult` for asynchronous work and `captureResultSync` for synchronou
 
 ```yaml
 dependencies:
-  domain_error: ^3.0.0
+  domain_error: ^3.1.0
 ```
 
-Requires Dart 3.13.0 or later within Dart 3.
+Requires Dart 3.0.0 or later within Dart 3. The package is pure Dart and has no
+Flutter SDK dependency. A separate consumer checks Flutter 3.10.0 and current stable
+without dependency overrides.
 
 ## Model errors
 
@@ -215,17 +217,29 @@ Applications that need observer diagnostics should supply `onObserverError`.
 ## Project documentation
 
 - [Domain glossary](GLOSSARY.md)
-- [Architecture decisions](docs/adr/)
+- [Architecture decisions](https://github.com/andrey-krasheninnikov/domain_error/tree/main/docs/adr)
 - [Repository guidance](AGENTS.md)
-- Workflow configuration: [issue tracker](docs/agents/issue-tracker.md),
-  [triage labels](docs/agents/triage-labels.md), and
-  [domain documentation](docs/agents/domain.md).
+- Workflow configuration: [issue tracker](https://github.com/andrey-krasheninnikov/domain_error/blob/main/docs/agents/issue-tracker.md),
+  [triage labels](https://github.com/andrey-krasheninnikov/domain_error/blob/main/docs/agents/triage-labels.md), and
+  [domain documentation](https://github.com/andrey-krasheninnikov/domain_error/blob/main/docs/agents/domain.md).
 
 ## Development
 
-Run `make deps`, then `make check`. The check target does not rewrite source files.
+From a repository checkout, run `make deps`, then `make check`. The check target does not rewrite source files.
 Use `make format` to apply formatting and `make publish-dry-run` to validate the package.
-CI checks Dart 3.13.0 and the stable channel on pull requests and pushes to `main`.
+Formatting uses the Dart 3.0 language style and a line length of 120, set by the
+Makefile so the same commands work on minimum and current SDKs.
+
+CI checks Dart 3.0.0 and current stable on pull requests and pushes to `main`.
+Flutter consumer jobs check Flutter 3.10.0 and current stable independently of the
+library checks. With the selected Flutter SDK on `PATH`, run `make flutter-deps`,
+then `make flutter-check`; use `make flutter-format` to format the fixture.
+
+To check the lowest runtime dependencies, run `flutter pub downgrade` inside
+`tool/flutter_consumer`, then run `make flutter-check` from the repository root.
+Flutter 3.10.0 pins collection 1.17.1 and meta 1.9.1; downgrade also selects
+equatable 2.0.7. The library test runner has its own development dependencies and
+does not constrain this consumer resolution.
 
 Editable diagrams live in `assets/overview.html`, `assets/flow.html`, and
 `assets/fold.html`, with shared `assets/readme-art.css`. Run `make diagrams` to
