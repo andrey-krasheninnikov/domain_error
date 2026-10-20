@@ -42,7 +42,9 @@ class ReadmeChecks(unittest.TestCase):
             (root / "cover.png").write_bytes(b"image")
             (root.parent / "outside.md").write_text("Existing file outside the checkout")
             check_links("![Cover](cover.png)", root)
-            for text in ("![](cover.png)", "[outside](../outside.md)", "![missing](absent.png)"):
+            check_links("[![Cover](cover.png)](https://example.org)", root)
+            for text in ("![](cover.png)", "[![](cover.png)](https://example.org)",
+                         "[outside](../outside.md)", "![missing](absent.png)"):
                 with self.subTest(text=text), self.assertRaises(ValueError):
                     check_links(text, root)
 

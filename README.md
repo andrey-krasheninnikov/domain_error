@@ -1,6 +1,6 @@
 # domain_error
 
-![domain_error: model expected failures and capture thrown errors as explicit success or error results](https://raw.githubusercontent.com/andrey-krasheninnikov/domain_error/abfbda92ffa6a77dd1f9a4536b462702d6a1e8c2/assets/cover.png)
+[![domain_error: model expected failures and capture thrown errors as explicit success or error results](https://raw.githubusercontent.com/andrey-krasheninnikov/domain_error/abfbda92ffa6a77dd1f9a4536b462702d6a1e8c2/assets/cover.png)](https://raw.githubusercontent.com/andrey-krasheninnikov/domain_error/abfbda92ffa6a77dd1f9a4536b462702d6a1e8c2/assets/cover.png)
 
 [![pub.dev version](https://img.shields.io/pub/v/domain_error.svg)](https://pub.dev/packages/domain_error)
 [![Dart and Flutter checks](https://github.com/andrey-krasheninnikov/domain_error/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/andrey-krasheninnikov/domain_error/actions/workflows/ci.yml)
@@ -135,7 +135,7 @@ and other thrown objects.
 
 ## Model domain errors
 
-![DomainError separates comparable business fields from diagnostic cause and stack trace, with one error hierarchy per feature](https://raw.githubusercontent.com/andrey-krasheninnikov/domain_error/abfbda92ffa6a77dd1f9a4536b462702d6a1e8c2/assets/flow.png)
+[![DomainError separates comparable business fields from diagnostic cause and stack trace, with one error hierarchy per feature](https://raw.githubusercontent.com/andrey-krasheninnikov/domain_error/abfbda92ffa6a77dd1f9a4536b462702d6a1e8c2/assets/flow.png)](https://raw.githubusercontent.com/andrey-krasheninnikov/domain_error/abfbda92ffa6a77dd1f9a4536b462702d6a1e8c2/assets/flow.png)
 
 Extend `DomainError` in your own library. A sealed feature root groups related
 outcomes while allowing exhaustive handling within your application's model.
@@ -205,7 +205,7 @@ or used as a map key.
 
 ## Capture operations
 
-![Capture returns success for a value, preserves a thrown DomainError, and observes other thrown objects before mapping them](https://raw.githubusercontent.com/andrey-krasheninnikov/domain_error/abfbda92ffa6a77dd1f9a4536b462702d6a1e8c2/assets/overview.png)
+[![Capture returns success for a value, preserves a thrown DomainError, and observes other thrown objects before mapping them](https://raw.githubusercontent.com/andrey-krasheninnikov/domain_error/abfbda92ffa6a77dd1f9a4536b462702d6a1e8c2/assets/overview.png)](https://raw.githubusercontent.com/andrey-krasheninnikov/domain_error/abfbda92ffa6a77dd1f9a4536b462702d6a1e8c2/assets/overview.png)
 
 Both capture functions take the operation as the first positional argument and
 require the named `mapToDomainError` callback. Observers are optional.
@@ -352,7 +352,7 @@ Future<void> main() async {
 
 ## Handle results
 
-![Sync and async capture return domain results with error and success branches; fold handles both and map changes only success](https://raw.githubusercontent.com/andrey-krasheninnikov/domain_error/abfbda92ffa6a77dd1f9a4536b462702d6a1e8c2/assets/fold.png)
+[![Sync and async capture return domain results with error and success branches; fold handles both and map changes only success](https://raw.githubusercontent.com/andrey-krasheninnikov/domain_error/abfbda92ffa6a77dd1f9a4536b462702d6a1e8c2/assets/fold.png)](https://raw.githubusercontent.com/andrey-krasheninnikov/domain_error/abfbda92ffa6a77dd1f9a4536b462702d6a1e8c2/assets/fold.png)
 
 `Result<T, E>` is sealed, with `ResultSuccess<T, E>` and `ResultError<T, E>`
 branches. Construct them with `Result.success` / `Result.error` or the concrete

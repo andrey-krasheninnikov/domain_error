@@ -53,7 +53,7 @@ def heading_ids(markdown):
 
 def check_links(markdown, root):
     prose = markdown_parts(markdown)[1]
-    for image, label, target in re.findall(r"(!?)\[([^\]]*)\]\(([^)\s]+)\)", prose):
+    for image, label, target in re.findall(r"(!?)\[([^\[\]]*)\]\(([^)\s]+)\)", prose):
         if image and not label.strip():
             raise ValueError(f"Image needs alt text: {target}")
         url = urlsplit(target)
