@@ -5,6 +5,10 @@ import 'package:meta/meta.dart';
 
 const DeepCollectionEquality _payloadEquality = DeepCollectionEquality();
 
+// Collection equality can depend on operand order, so compare both directions.
+bool _payloadsEqual(Object? first, Object? second) =>
+    _payloadEquality.equals(first, second) && _payloadEquality.equals(second, first);
+
 /// A value that is either an [error] or a [value].
 ///
 /// Equality requires the same concrete type (including type arguments) and
@@ -140,10 +144,7 @@ final class ResultError<T, E> extends Result<T, E> {
     if (identical(this, other)) {
       return true;
     }
-    return other.runtimeType == runtimeType &&
-        other is ResultError<T, E> &&
-        _payloadEquality.equals(error, other.error) &&
-        _payloadEquality.equals(other.error, error);
+    return other.runtimeType == runtimeType && other is ResultError<T, E> && _payloadsEqual(error, other.error);
   }
 }
 
@@ -164,10 +165,7 @@ final class ResultSuccess<T, E> extends Result<T, E> {
     if (identical(this, other)) {
       return true;
     }
-    return other.runtimeType == runtimeType &&
-        other is ResultSuccess<T, E> &&
-        _payloadEquality.equals(value, other.value) &&
-        _payloadEquality.equals(other.value, value);
+    return other.runtimeType == runtimeType && other is ResultSuccess<T, E> && _payloadsEqual(value, other.value);
   }
 }
 
